@@ -2,7 +2,7 @@ require('dotenv').config({
   path: process.env.NODE_ENV ? `./.env.${process.env.NODE_ENV}` : './.env',
 });
 const sqlConnect = require('./init/sql');
-const sequelize = require('./init/sql/models/sequelize');
+const sequelize = require('./init/sql/sequelize');
 const initServer = require('./init/server');
 const express = require('express');
 const associateThem = require('./init/sql/models/associateThem');

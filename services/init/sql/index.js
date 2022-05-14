@@ -1,4 +1,4 @@
-const sequelize = require('./models/sequelize');
+const sequelize = require('./sequelize');
 
 const sqlConnect = async () => {
   try {
