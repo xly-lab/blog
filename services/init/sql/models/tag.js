@@ -1,9 +1,8 @@
-const { DataTypes, Model } = require('sequelize');
-const { sequelize } = require('..');
+const { DataTypes } = require('sequelize');
+const sequelize = require('./sequelize');
 
-class Tag extends Model {}
-
-Tag.init(
+const Tag = sequelize.define(
+  'Tag',
   {
     // 在这里定义模型属性
     name: {
@@ -15,8 +14,6 @@ Tag.init(
   },
   {
     // 这是其他模型参数
-    sequelize, // 我们需要传递连接实例
-    modelName: 'Tag', // 我们需要选择模型名称
     timestamps: false,
   }
 );

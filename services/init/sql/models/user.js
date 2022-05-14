@@ -1,44 +1,35 @@
-const { DataTypes, Model } = require('sequelize');
-const { sequelize } = require('../');
+const { DataTypes } = require('sequelize');
+const sequelize = require('./sequelize');
 
-class User extends Model {}
-
-User.init(
-  {
-    // 在这里定义模型属性
-    email: {
-      // 邮箱
-      type: DataTypes.STRING,
-      allowNull: false,
-      primaryKey: true,
-    },
-    username: {
-      // 用户名
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    password: {
-      // 密码
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    avatar: {
-      // 头像
-      type: DataTypes.TEXT,
-      allowNull: true,
-    },
-    dio: {
-      // 简介
-      type: DataTypes.TEXT,
-      allowNull: true,
-    },
+const User = sequelize.define('User', {
+  // 在这里定义模型属性
+  email: {
+    // 邮箱
+    type: DataTypes.STRING,
+    allowNull: false,
+    primaryKey: true,
   },
-  {
-    // 这是其他模型参数
-    sequelize, // 我们需要传递连接实例
-    modelName: 'User', // 我们需要选择模型名称
-  }
-);
+  username: {
+    // 用户名
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  password: {
+    // 密码
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  avatar: {
+    // 头像
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  dio: {
+    // 简介
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+});
 
 module.exports = User;
