@@ -9,14 +9,13 @@ const sequelize = new Sequelize(DB_DATABASE, DB_USERNAME, DB_PASSWORD, {
   dialect: DB_DIALECT,
 });
 
-const sqlConnect = async (cb) => {
+const sqlConnect = async () => {
   try {
     await sequelize.authenticate();
     console.log('Connection mysql has been established successfully.');
-    cb?.();
   } catch (error) {
     console.error('Unable to connect to the database of mysql:', error);
   }
 };
 
-exports.sqlConnect = sqlConnect;
+module.exports = sqlConnect;

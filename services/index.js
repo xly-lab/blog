@@ -1,15 +1,17 @@
-const dotenv = require('dotenv');
-const express = require('express');
-
-dotenv.config({
+require('dotenv').config({
   path: process.env.NODE_ENV ? `./.env.${process.env.NODE_ENV}` : './.env',
 });
+const sqlConnect = require('./init/sql');
+const initServer = require('./init/server');
+const express = require('express');
 
-const PORT = process.env.PORT || 8899;
 const app = express();
 
-require('./init/sql').sqlConnect(() => {
-  app.listen(PORT, () => {
-    console.log(`服务启动成功 ！已监听端口：${PORT} `);
-  });
-});
+const main = async () => {
+  // 连接数据库
+  await sqlConnect();
+  // 启动服务
+  await initServer(app);
+};
+
+main();
