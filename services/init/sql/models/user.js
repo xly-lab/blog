@@ -13,7 +13,7 @@ const User = sequelize.define('User', {
     // 用户名
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
+    unique: 'username',
   },
   password: {
     // 密码
