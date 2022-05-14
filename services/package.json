@@ -1,0 +1,22 @@
+{
+  "name": "blog-services",
+  "version": "1.0.0",
+  "description": "react-fresh",
+  "main": "index.js",
+  "author": "xly",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon ./",
+    "start:local": "cross-env NODE_ENV=local  nodemon --trace-deprecation ./ "
+  },
+  "dependencies": {
+    "express": "^4.18.1",
+    "mysql2": "^2.3.3",
+    "sequelize": "^6.19.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.0.1",
+    "nodemon": "^2.0.16"
+  }
+}
