@@ -19,3 +19,4 @@ const sqlConnect = async () => {
 };
 
 module.exports = sqlConnect;
+exports.sequelize = sequelize;
