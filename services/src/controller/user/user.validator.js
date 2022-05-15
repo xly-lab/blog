@@ -1,6 +1,6 @@
 const validator = require('validator');
 
-const validateUserInfo = ({ username, password, email }) => {
+const validateUserInfo = ({ username = '', password = '', email = '' }) => {
   const errMsg = {};
   if (validator.isEmpty(username)) {
     errMsg.username = '用户名不能为空';
@@ -16,9 +16,9 @@ const validateUserInfo = ({ username, password, email }) => {
     }
   }
   if (Object.keys(errMsg).length <= 0) {
-    return true;
+    return { result: true };
   } else {
-    return errMsg;
+    return { result: false, errMsg };
   }
 };
 
