@@ -33,7 +33,7 @@ const getInfo = async (req, res) => {
 };
 
 // 用户注册
-const createUser = async (req, res) => {
+const create = async (req, res) => {
   const user = req?.body || {};
   const { result, errMsg } = validateUserInfo(user);
   if (!result) {
@@ -115,8 +115,35 @@ const login = async (req, res) => {
   }
 };
 
+const update = async (req, res) => {
+  const { username, password, avatar, dio } = req?.body || {};
+  const email = req?.authorizedEmail || '';
+  try {
+    const result = await User.update(
+      { username, password, avatar, dio },
+      {
+        where: {
+          email,
+        },
+      }
+    );
+    if (String(result) === '1') {
+      res.status(200).json({
+        code: 0,
+        message: '用户信息更新成功',
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      code: 0,
+      message: '内部异常:' + error.message,
+    });
+  }
+};
+
 module.exports = {
   getInfo,
-  createUser,
+  create,
   login,
+  update,
 };
