@@ -1,32 +1,12 @@
 const User = require('../../init/sql/models/user');
 const validateUserInfo = require('./user.validator');
-const jwt = require('../../utils/jwt');
-const getUserInfo = async (req, res) => {
-  res.json({
-    code: 1,
-    message: '请求成功',
-  });
-};
+const makeToken = require('./user.utils');
 
-const createUser = async (req, res) => {
-  res.json({
-    code: 1,
-    message: '请求成功',
-  });
-};
-
-const login = async (req, res) => {
-  const user = req?.body || {};
-  const { result, errMsg } = validateUserInfo(user);
-  if (!result) {
-    res.status(401).json({
-      code: 0,
-      message: String(Object.values(errMsg)),
-    });
-    return;
-  }
+// 获取用户信息
+const getInfo = async (req, res) => {
+  const email = req.authorizedEmail || '';
   try {
-    const findResult = await User.findByPk(user?.email || '');
+    const findResult = await User.findByPk(email);
 
     if (!findResult) {
       res.status(401).json({
@@ -35,13 +15,10 @@ const login = async (req, res) => {
       });
       return;
     }
-
-    const token = await jwt.sign(user);
-    const { password, ...otherBackData } = user;
-
+    const { password, ...otherBackData } = findResult?.dataValues || {};
     res.status(200).json({
       code: 1,
-      message: '登录成功',
+      message: '查找用户成功',
       data: {
         token,
         ...otherBackData,
@@ -55,8 +32,91 @@ const login = async (req, res) => {
   }
 };
 
+// 用户注册
+const createUser = async (req, res) => {
+  const user = req?.body || {};
+  const { result, errMsg } = validateUserInfo(user);
+  if (!result) {
+    res.status(401).json({
+      code: 0,
+      message: String(Object.values(errMsg)),
+    });
+    return;
+  }
+
+  try {
+    const findResult = await User.findByPk(user?.email || '');
+
+    if (findResult) {
+      res.status(401).json({
+        code: 0,
+        message: '用户已注册',
+      });
+      return;
+    }
+  } catch (error) {
+    res.status(500).json({
+      code: 0,
+      message: '内部异常:' + error.message,
+    });
+  }
+
+  try {
+    const { username, password, email, avatar, dio } = user;
+    const createResult = await User.create({ username, password, email, avatar, dio });
+    makeToken(createResult?.dataValues, res, '用户注册成功');
+  } catch (error) {
+    res.status(500).json({
+      code: 0,
+      message: '内部异常:' + error.message,
+    });
+  }
+};
+
+// 用户登录
+const login = async (req, res) => {
+  const user = req?.body || {};
+  const { result, errMsg } = validateUserInfo(user);
+  if (!result) {
+    res.status(401).json({
+      code: 0,
+      message: String(Object.values(errMsg)),
+    });
+    return;
+  }
+  try {
+    const findResult = await User.findByPk(user?.email || '');
+
+    console.log(findResult);
+
+    if (!findResult) {
+      res.status(401).json({
+        code: 0,
+        message: '用户未注册',
+      });
+      return;
+    }
+
+    const { password } = findResult?.dataValues || {};
+
+    if (password !== user.password) {
+      res.status(403).json({
+        code: 0,
+        message: '密码错误',
+      });
+      return;
+    }
+    makeToken(findResult?.dataValues, res, '登录成功');
+  } catch (error) {
+    res.status(500).json({
+      code: 0,
+      message: '内部异常:' + error.message,
+    });
+  }
+};
+
 module.exports = {
-  getUserInfo,
+  getInfo,
   createUser,
   login,
 };
