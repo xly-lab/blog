@@ -7,8 +7,9 @@ const authorization = async (req, res, next) => {
     const { email } = await jwt.decode(authorization.split(' ')[1]);
     req.authorizedEmail = email;
     try {
-      const hasUser = await User.findByPk(email);
-      if (hasUser) {
+      const findResult = await User.findByPk(email);
+      req.findResult = findResult;
+      if (findResult) {
         next();
       } else {
         res.status(401).json({

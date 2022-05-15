@@ -4,10 +4,8 @@ const makeToken = require('./user.utils');
 
 // 获取用户信息
 const getInfo = async (req, res) => {
-  const email = req.authorizedEmail || '';
+  const findResult = req.findResult || {};
   try {
-    const findResult = await User.findByPk(email);
-
     if (!findResult) {
       res.status(401).json({
         code: 0,
@@ -18,9 +16,8 @@ const getInfo = async (req, res) => {
     const { password, ...otherBackData } = findResult?.dataValues || {};
     res.status(200).json({
       code: 1,
-      message: '查找用户成功',
+      message: 'ok',
       data: {
-        token,
         ...otherBackData,
       },
     });
@@ -116,22 +113,19 @@ const login = async (req, res) => {
 };
 
 const update = async (req, res) => {
-  const { username, password, avatar, dio } = req?.body || {};
+  const user = req?.body || {};
   const email = req?.authorizedEmail || '';
   try {
-    const result = await User.update(
-      { username, password, avatar, dio },
-      {
-        where: {
-          email,
-        },
-      }
-    );
+    const result = await User.update(user, {
+      where: {
+        email,
+      },
+    });
     if (String(result) === '1') {
-      res.status(200).json({
-        code: 0,
-        message: '用户信息更新成功',
-      });
+      try {
+        const findResult = await User.findByPk(email || '');
+        makeToken(findResult?.dataValues, res, '用户信息更新成功');
+      } catch (error) {}
     }
   } catch (error) {
     res.status(500).json({
