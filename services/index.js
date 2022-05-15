@@ -5,8 +5,8 @@ require('dotenv').config({
   path: process.env.NODE_ENV ? `./.env.${process.env.NODE_ENV}` : './.env',
 });
 
-const sqlConnect = require('./init/sql');
-const initServer = require('./init/server');
+const sqlConnect = require('./src/init/sql');
+const initServer = require('./src/init/server');
 const initRouter = require('./src/routes');
 
 const app = express();

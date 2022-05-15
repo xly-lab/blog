@@ -1,4 +1,4 @@
-const User = require('../../../init/sql/models/user');
+const User = require('../../init/sql/models/user');
 const validateUserInfo = require('./user.validator');
 const jwt = require('../../utils/jwt');
 const getUserInfo = async (req, res) => {
