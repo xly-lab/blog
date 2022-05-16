@@ -48,8 +48,8 @@ const associateThem = () => {
 
   // 用户与用户 （关注）
   User.belongsToMany(User, {
-    through: 'Follower',
-    as: 'follower',
+    through: 'Followers',
+    as: 'followers',
     timestamps: false,
   });
 };
