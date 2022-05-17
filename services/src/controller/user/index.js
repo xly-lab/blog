@@ -72,7 +72,7 @@ const create = async (req, res) => {
 
 // 用户登录
 const login = async (req, res) => {
-  const user = req?.body || {};
+  const user = req?.body || { username: '' };
   const { result, errMsg } = validateUserInfo(user);
   if (!result) {
     res.status(401).json({
@@ -84,7 +84,13 @@ const login = async (req, res) => {
   try {
     const findResult = await User.findByPk(user?.email || '');
 
-    console.log(findResult);
+    if (findResult?.username !== user?.username) {
+      res.status(401).json({
+        code: 0,
+        message: '用户信息不匹配',
+      });
+      return;
+    }
 
     if (!findResult) {
       res.status(401).json({

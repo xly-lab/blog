@@ -1,8 +1,6 @@
 require('dotenv').config({ path: '../../.env.local' });
 const jwt = require('jsonwebtoken');
 
-console.log(process.env.JWT_SECRET);
-
 const sign = (user) => {
   return new Promise((resolve, reject) => {
     if (typeof user === 'object' && user !== null) {

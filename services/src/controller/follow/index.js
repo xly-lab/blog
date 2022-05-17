@@ -1,5 +1,6 @@
 const User = require('../../init/sql/models/user');
 
+// 关注
 const followUser = async (req, res) => {
   const { username } = req.body;
   try {
@@ -38,6 +39,8 @@ const followUser = async (req, res) => {
     });
   }
 };
+
+// 取消关注
 const followCancel = async (req, res) => {
   const { username } = req.body;
   try {
@@ -76,7 +79,47 @@ const followCancel = async (req, res) => {
     });
   }
 };
+
+// 获取关注信息
+const getFollowers = async (req, res) => {
+  const email = req?.authorizedEmail || '';
+  const { username } = req.body;
+  try {
+    const followerUsers =
+      (await User.findOne({
+        where: { username },
+        include: ['followers'],
+      })) || [];
+    let following = false;
+    for (const followUser of followerUsers?.followers) {
+      if (followUser.email === email) {
+        following = true;
+        break;
+      }
+    }
+    const followUsers = followerUsers.followers.map((item) => {
+      const { password, Followers, ...otherData } = item?.dataValues || {};
+      return otherData;
+    });
+
+    res.status(200).json({
+      code: 1,
+      message: 'ok',
+      data: {
+        ...req.findResult,
+        following,
+        followUsers,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      code: 0,
+      message: '内部异常:' + error.message,
+    });
+  }
+};
 module.exports = {
   followUser,
   followCancel,
+  getFollowers,
 };

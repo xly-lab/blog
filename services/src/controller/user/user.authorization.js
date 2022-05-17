@@ -8,7 +8,8 @@ const authorization = async (req, res, next) => {
     req.authorizedEmail = email;
     try {
       const findResult = await User.findByPk(email);
-      req.findResult = findResult;
+      const { password, ...otherLoginUser } = findResult.dataValues;
+      req.findResult = otherLoginUser;
       if (findResult) {
         next();
       } else {
