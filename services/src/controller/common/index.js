@@ -4,6 +4,13 @@ const jwt = require('../../utils/jwt');
 const authorization = async (req, res, next) => {
   const { authorization = '' } = req.headers;
   try {
+    if (!authorization) {
+      res.status(200).json({
+        code: 0,
+        message: '当前未登录',
+      });
+      return;
+    }
     const { email } = await jwt.decode(authorization.split(' ')[1]);
     req.authorizedEmail = email;
     try {
