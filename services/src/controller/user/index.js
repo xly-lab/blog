@@ -82,14 +82,13 @@ const login = async (req, res) => {
     return;
   }
   try {
-    const findResult = await User.findByPk(user?.email || '');
-
-    if (findResult?.username !== user?.username) {
-      res.status(401).json({
-        code: 0,
-        message: '用户信息不匹配',
+    let findResult = await User.findByPk(user?.email || '');
+    if (!findResult) {
+      findResult = await User.findOne({
+        where: {
+          username: user?.username || '',
+        },
       });
-      return;
     }
 
     if (!findResult) {
