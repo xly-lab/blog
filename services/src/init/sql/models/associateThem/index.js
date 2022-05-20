@@ -23,6 +23,7 @@ const associateThem = () => {
     onDelete: 'CASCADE',
   });
   Comment.belongsTo(User);
+  Comment.belongsTo(Article);
 
   // 文章与标签
   Article.belongsToMany(Tag, {

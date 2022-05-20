@@ -22,7 +22,7 @@ const authorization = async (req, res, next) => {
       } else {
         res.status(401).json({
           code: 0,
-          message: '用户未授权',
+          message: '用户不存在或未授权',
         });
       }
     } catch (error) {
