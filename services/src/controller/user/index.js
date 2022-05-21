@@ -13,12 +13,11 @@ const getInfo = async (req, res) => {
       });
       return;
     }
-    const { password, ...otherBackData } = findResult?.dataValues || {};
     res.status(200).json({
       code: 1,
       message: 'ok',
       data: {
-        ...otherBackData,
+        ...(findResult || {}),
       },
     });
   } catch (error) {
