@@ -1,5 +1,7 @@
+const sequelize = require('sequelize');
 const Article = require('../../init/sql/models/article');
 const Tag = require('../../init/sql/models/tag');
+const Comment = require('../../init/sql/models/comment');
 const validateArticle = require('./article.validate');
 const makeSlug = require('./article.utils');
 
@@ -44,7 +46,41 @@ const createArticles = async (req, res) => {
   }
 };
 
-const getArticles = () => {};
+const getArticles = async (req, res) => {
+  const { title = '', limit = 10, offset = 0 } = req.body;
+  let findResult;
+  try {
+    if (!title) {
+      findResult = await Article.findAndCountAll({
+        limit: Number(limit),
+        offset: Number(offset),
+        include: Tag,
+      });
+    } else {
+      findResult = await Article.findAndCountAll({
+        where: {
+          title: {
+            [sequelize.Op.like]: `%${title}%`,
+          },
+        },
+        include: Tag,
+        limit: Number(limit),
+        offset: Number(offset),
+      });
+    }
+    console.log(findResult);
+    res.status(200).json({
+      code: 1,
+      message: 'success',
+      data: findResult,
+    });
+  } catch (error) {
+    res.status(500).json({
+      code: 0,
+      message: '内部异常:' + error.message,
+    });
+  }
+};
 
 module.exports = {
   getArticles,
