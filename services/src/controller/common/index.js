@@ -3,18 +3,26 @@ const jwt = require('../../utils/jwt');
 
 const authorization = async (req, res, next) => {
   const { authorization = '' } = req.headers;
+  if (!authorization) {
+    res.status(200).json({
+      code: 0,
+      message: '当前未登录',
+    });
+    return;
+  }
   try {
-    if (!authorization) {
-      res.status(200).json({
-        code: 0,
-        message: '当前未登录',
-      });
-      return;
-    }
     const { email } = await jwt.decode(authorization.split(' ')[1]);
     req.authorizedEmail = email;
+  } catch (error) {
+    res.status(401).json({
+      code: 0,
+      message: '验证已过期或验证有误！',
+    });
+    return;
+  }
+  try {
     try {
-      const findResult = await User.findByPk(email, {
+      const findResult = await User.findByPk(req.authorizedEmail, {
         attributes: { exclude: ['password'] },
       });
       req.findResult = findResult.dataValues;
