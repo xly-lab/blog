@@ -34,7 +34,6 @@ const createTag = async (req, res) => {
     }
     try {
       const createResult = await Tag.create({ name });
-      console.log('createResult', createResult);
       res.status(200).json({ code: 1, message: '标签创建成功' });
     } catch (error) {
       res.status(500).json({

@@ -1,14 +1,15 @@
 const sequelize = require('sequelize');
+const xss = require('xss');
 const Article = require('../../init/sql/models/article');
 const Tag = require('../../init/sql/models/tag');
 const Comment = require('../../init/sql/models/comment');
 const validateArticle = require('./article.validate');
 const makeSlug = require('./article.utils');
+const User = require('../../init/sql/models/user');
 
 // 创建文章
 const createArticles = async (req, res) => {
   const UserEmail = req?.authorizedEmail || '';
-  console.log('userEmail', UserEmail);
   const { title = '', description = '', body = '', tags = [] } = req?.body || {};
   const { result, errMsg } = validateArticle({ title, description, body });
   if (!result) {
@@ -20,7 +21,13 @@ const createArticles = async (req, res) => {
   const slug = makeSlug();
 
   try {
-    const createResult = await Article.create({ slug, title, description, body, UserEmail });
+    const createResult = await Article.create({
+      slug,
+      title,
+      description: xss(description),
+      body: xss(body),
+      UserEmail,
+    });
 
     for (const name of tags) {
       const existTag = await Tag.findByPk(name);
@@ -101,6 +108,8 @@ const getMoreArticles = async (req, res) => {
     });
   }
 };
+
+// 获取单个文章
 const getArticle = async (req, res) => {
   const { slug = '' } = req.body;
   try {
@@ -125,8 +134,71 @@ const getArticle = async (req, res) => {
   }
 };
 
+// 获取作者的相关文章
+const getOwnerArticles = async (req, res) => {
+  const { email = '', username = '', limit = 10, offset = 0 } = req.body;
+  try {
+    const findResult =
+      (await User.findByPk(email)) ||
+      (await User.findOne({
+        where: {
+          username,
+        },
+      }));
+    if (!findResult) {
+      res.status(401).json({
+        code: 0,
+        message: '当前作者不存在',
+      });
+      return;
+    }
+
+    const articleResult = await Article.findAndCountAll({
+      where: {
+        UserEmail: findResult.email,
+      },
+      distinct: true,
+      limit: Number(limit),
+      offset: Number(offset),
+      include: Tag,
+      attributes: {
+        exclude: ['body'],
+      },
+    });
+    const total = articleResult?.count ?? 0;
+    const articles = [];
+    for (let article of articleResult?.rows || {}) {
+      const { slug = '' } = article;
+      const comments = await Comment.findAndCountAll({
+        where: { ArticleSlug: slug },
+      });
+      article = {
+        ...article.dataValues,
+        Tags: article?.Tags?.map((tag) => tag.name) || [],
+        comments_count: comments.count ?? 0,
+      };
+      articles.push(article);
+    }
+    res.status(200).json({
+      code: 0,
+      message: '获取当前用户文章成功',
+      data: {
+        total,
+        articles,
+        limit: Number(limit),
+        offset: Number(offset),
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      code: 0,
+      message: '内部异常:' + error.message,
+    });
+  }
+};
 module.exports = {
   getMoreArticles,
   createArticles,
   getArticle,
+  getOwnerArticles,
 };

@@ -19,7 +19,8 @@
     "mysql2": "^2.3.3",
     "sequelize": "^6.19.0",
     "unique-slug": "^2.0.2",
-    "validator": "^13.7.0"
+    "validator": "^13.7.0",
+    "xss": "^1.0.11"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
