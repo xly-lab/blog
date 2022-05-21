@@ -5,6 +5,7 @@ const authorization = require('../../controller/common');
 const router = express.Router();
 
 router.post('/create', authorization, articleController.createArticles);
-router.get('/get', articleController.getArticles);
+router.get('/getMore', articleController.getMoreArticles);
+router.get('/get', articleController.getArticle);
 
 module.exports = router;

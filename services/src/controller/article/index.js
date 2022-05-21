@@ -5,6 +5,7 @@ const Comment = require('../../init/sql/models/comment');
 const validateArticle = require('./article.validate');
 const makeSlug = require('./article.utils');
 
+// 创建文章
 const createArticles = async (req, res) => {
   const UserEmail = req?.authorizedEmail || '';
   console.log('userEmail', UserEmail);
@@ -46,32 +47,74 @@ const createArticles = async (req, res) => {
   }
 };
 
-const getArticles = async (req, res) => {
+// 获取多篇文章
+const getMoreArticles = async (req, res) => {
   const { title = '', limit = 10, offset = 0 } = req.body;
-  let findResult;
-  try {
-    if (!title) {
-      findResult = await Article.findAndCountAll({
-        limit: Number(limit),
-        offset: Number(offset),
-        include: Tag,
-      });
-    } else {
-      findResult = await Article.findAndCountAll({
-        where: {
-          title: {
-            [sequelize.Op.like]: `%${title}%`,
-          },
+  const findConditions = Object.assign(
+    {
+      limit: Number(limit),
+      offset: Number(offset),
+      include: Tag,
+      attributes: {
+        exclude: ['body'],
+      },
+      distinct: true,
+    },
+    title && {
+      where: {
+        title: {
+          [sequelize.Op.like]: `%${title}%`,
         },
-        include: Tag,
-        limit: Number(limit),
-        offset: Number(offset),
-      });
+      },
     }
-    console.log(findResult);
+  );
+  try {
+    const findResult = await Article.findAndCountAll(findConditions);
+    const total = findResult.count;
+    const articles = [];
+    for (let article of findResult?.rows || {}) {
+      const { slug = '' } = article;
+      const comments = await Comment.findAndCountAll({
+        where: { ArticleSlug: slug },
+      });
+      article = {
+        ...article.dataValues,
+        Tags: article?.Tags?.map((tag) => tag.name) || [],
+        comments_count: comments.count ?? 0,
+      };
+      articles.push(article);
+    }
     res.status(200).json({
       code: 1,
       message: 'success',
+      data: {
+        total,
+        articles,
+        limit: Number(limit),
+        offset: Number(offset),
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      code: 0,
+      message: '内部异常:' + error.message,
+    });
+  }
+};
+const getArticle = async (req, res) => {
+  const { slug = '' } = req.body;
+  try {
+    const findResult = await Article.findByPk(slug);
+    if (!findResult) {
+      res.status(404).json({
+        code: 0,
+        message: '文章不存在',
+      });
+      return;
+    }
+    res.status(200).json({
+      code: 1,
+      message: 'ok',
       data: findResult,
     });
   } catch (error) {
@@ -83,6 +126,7 @@ const getArticles = async (req, res) => {
 };
 
 module.exports = {
-  getArticles,
+  getMoreArticles,
   createArticles,
+  getArticle,
 };
