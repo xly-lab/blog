@@ -14,9 +14,10 @@ const authorization = async (req, res, next) => {
     const { email } = await jwt.decode(authorization.split(' ')[1]);
     req.authorizedEmail = email;
     try {
-      const findResult = await User.findByPk(email);
-      const { password, ...otherLoginUser } = findResult.dataValues;
-      req.findResult = otherLoginUser;
+      const findResult = await User.findByPk(email, {
+        attributes: { exclude: ['password'] },
+      });
+      req.findResult = findResult.dataValues;
       if (findResult) {
         next();
       } else {
