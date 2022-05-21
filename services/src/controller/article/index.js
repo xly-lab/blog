@@ -54,6 +54,67 @@ const createArticles = async (req, res) => {
   }
 };
 
+// 更新文章
+const updateArticle = async (req, res) => {
+  const email = req?.authorizedEmail || '';
+  const { title = '', description = '', body = '', tags = [], slug } = req?.body || {};
+  const { result, errMsg } = validateArticle({ title, description, body });
+  if (!result) {
+    res.status(401).json({
+      coed: 0,
+      message: String(Object.values(errMsg)),
+    });
+  }
+  try {
+    const findResult = await Article.findByPk(slug, {
+      include: Tag,
+    });
+    if (email !== findResult.UserEmail) {
+      res.status(401).json({
+        code: 0,
+        message: '你不是当前文章作者，无法修改',
+      });
+      return;
+    }
+    if (!findResult) {
+      res.status(404).json({
+        code: 0,
+        message: '所更新文章不存在',
+      });
+      return;
+    }
+    const updateResult = await findResult.update({ tags, title, description: xss(description), body: xss(body) });
+    // 标签处理
+    // 1 删除没有的标签
+    for (const name of findResult?.Tags?.map((item) => item.name)) {
+      await updateResult.removeTag(name);
+    }
+    // 2 重新关联文章对应的标签
+    for (const name of tags) {
+      const existTag = await Tag.findByPk(name);
+      if (!existTag) {
+        Tag.create({ name });
+      }
+      await updateResult.addTag(name);
+    }
+
+    if (updateResult) {
+      const successArticle = await Article.findByPk(slug, { include: Tag });
+      const Tags = successArticle?.Tags?.map((item) => item.name);
+      res.status(200).json({
+        code: 1,
+        message: '文章创建成功',
+        data: { ...successArticle.dataValues, Tags },
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      code: 0,
+      message: '内部异常:' + error.message,
+    });
+  }
+};
+
 // 获取多篇文章
 const getMoreArticles = async (req, res) => {
   const { title = '', limit = 10, offset = 0 } = req.body;
@@ -196,9 +257,11 @@ const getOwnerArticles = async (req, res) => {
     });
   }
 };
+
 module.exports = {
   getMoreArticles,
   createArticles,
   getArticle,
   getOwnerArticles,
+  updateArticle,
 };
