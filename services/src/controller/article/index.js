@@ -57,7 +57,7 @@ const createArticles = async (req, res) => {
 // 更新文章
 const updateArticle = async (req, res) => {
   const email = req?.authorizedEmail || '';
-  const { title = '', description = '', body = '', tags = [], slug } = req?.body || {};
+  const { title = '', description = '', body = '', tags = [], slug = '' } = req?.body || {};
   const { result, errMsg } = validateArticle({ title, description, body });
   if (!result) {
     res.status(401).json({
@@ -241,7 +241,7 @@ const getOwnerArticles = async (req, res) => {
       articles.push(article);
     }
     res.status(200).json({
-      code: 0,
+      code: 1,
       message: '获取当前用户文章成功',
       data: {
         total,
@@ -258,10 +258,39 @@ const getOwnerArticles = async (req, res) => {
   }
 };
 
+// 删除文章
+
+const deleteArticle = async (req, res) => {
+  const email = req?.authorizedEmail || '';
+  const { slug = '' } = req?.body || {};
+  try {
+    const findResult = await Article.findByPk(slug);
+    console.log(email, findResult.UserEmail);
+    if (email !== findResult.UserEmail) {
+      res.status(401).json({
+        code: 0,
+        message: '你不是当前文章作者，无法修改',
+      });
+      return;
+    }
+    await findResult.destroy();
+    res.status(200).json({
+      code: 1,
+      message: '删除成功',
+    });
+  } catch (error) {
+    res.status(500).json({
+      code: 0,
+      message: '内部异常:' + error.message,
+    });
+  }
+};
+
 module.exports = {
   getMoreArticles,
   createArticles,
   getArticle,
   getOwnerArticles,
   updateArticle,
+  deleteArticle,
 };

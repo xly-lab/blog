@@ -27,6 +27,7 @@ const associateThem = () => {
 
   // 文章与标签
   Article.belongsToMany(Tag, {
+    onDelete: 'CASCADE',
     through: 'TagList',
     timestamps: false,
     uniqueKey: false,

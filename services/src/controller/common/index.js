@@ -4,7 +4,7 @@ const jwt = require('../../utils/jwt');
 const authorization = async (req, res, next) => {
   const { authorization = '' } = req.headers;
   if (!authorization) {
-    res.status(200).json({
+    res.status(401).json({
       code: 0,
       message: '当前未登录',
     });
