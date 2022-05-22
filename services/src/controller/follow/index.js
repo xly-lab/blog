@@ -4,11 +4,11 @@ const sequelizeModel = require('../../init/sql/sequelize');
 
 // 关注
 const followUser = async (req, res) => {
-  const { username } = req.body;
+  const { username = '', email = '' } = req.body;
   try {
     const userBeFocusOn = await User.findOne({
       where: {
-        username,
+        [sequelize.Op.or]: { username, email },
       },
     });
     if (!userBeFocusOn) {
@@ -20,6 +20,13 @@ const followUser = async (req, res) => {
     }
     try {
       const userFocusOn = req.loggedUserInfo;
+      if (userFocusOn?.email === userBeFocusOn?.email) {
+        res.status(401).json({
+          code: 0,
+          message: '无法关注自己哟',
+        });
+        return;
+      }
       await userBeFocusOn.addFollowers(userFocusOn);
       res.status(200).json({
         code: 1,
@@ -44,11 +51,11 @@ const followUser = async (req, res) => {
 
 // 取消关注
 const followCancel = async (req, res) => {
-  const { username } = req.body;
+  const { username = '', email = '' } = req.body;
   try {
     const userBeFocusOn = await User.findOne({
       where: {
-        username,
+        [sequelize.Op.or]: { username, email },
       },
     });
     if (!userBeFocusOn) {
@@ -60,6 +67,21 @@ const followCancel = async (req, res) => {
     }
     try {
       const userFocusOn = req.loggedUserInfo;
+      if (userFocusOn?.email === userBeFocusOn?.email) {
+        res.status(401).json({
+          code: 0,
+          message: '无法操作自己哟',
+        });
+        return;
+      }
+      const isFollow = await userBeFocusOn.hasFollower(userFocusOn);
+      if (!isFollow) {
+        res.status(403).json({
+          code: 0,
+          message: '您未关注该作者',
+        });
+        return;
+      }
       await userBeFocusOn.removeFollowers(userFocusOn);
       res.status(200).json({
         code: 1,
@@ -139,7 +161,7 @@ const isFollow = async (req, res) => {
       code: 1,
       message: 'ok',
       data: {
-        ...req.loggedUserInfo,
+        ...req.loggedUserInfo?.dataValues,
         following,
       },
     });
