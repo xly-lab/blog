@@ -1,5 +1,6 @@
 const User = require('../../init/sql/models/user');
 const sequelize = require('sequelize');
+const sequelizeModel = require('../../init/sql/sequelize');
 
 // 关注
 const followUser = async (req, res) => {
@@ -81,7 +82,7 @@ const followCancel = async (req, res) => {
   }
 };
 
-// 获取作者关注信息
+// 获取作者被关注信息
 const getFollowers = async (req, res) => {
   const { email = '', username = '' } = req.body;
   try {
@@ -150,6 +151,36 @@ const isFollow = async (req, res) => {
   }
 };
 
+// 获取作者关注的信息
+const beFollowed = async (req, res) => {
+  const { email = '', username = '' } = req.body;
+  try {
+    const followerUsers =
+      (await User.findOne({
+        where: {
+          [sequelize.Op.or]: { username, email },
+        },
+      })) || [];
+    console.log('followerUsers', followerUsers);
+    const sql = `SELECT UserEmail from followers WHERE followerEmail = '${followerUsers?.email}'`;
+
+    const result = await sequelizeModel.query(sql, { type: sequelize.QueryTypes.SELECT });
+
+    res.status(200).json({
+      code: 0,
+      message: '获取作者所关注的信息成功',
+      data: {
+        total: result.length,
+        data: result,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      code: 0,
+      message: '内部异常:' + error.message,
+    });
+  }
+};
 // 获取作者被关注的信息
 
 module.exports = {
@@ -157,4 +188,5 @@ module.exports = {
   followCancel,
   getFollowers,
   isFollow,
+  beFollowed,
 };
