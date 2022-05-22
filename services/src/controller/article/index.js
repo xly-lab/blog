@@ -116,6 +116,32 @@ const updateArticle = async (req, res) => {
   }
 };
 
+// 删除文章
+const deleteArticle = async (req, res) => {
+  const email = req?.authorizedEmail || '';
+  const { slug = '' } = req?.body || {};
+  try {
+    const findResult = await Article.findByPk(slug);
+    if (email !== findResult.UserEmail) {
+      res.status(401).json({
+        code: 0,
+        message: '你不是当前文章作者，无法修改',
+      });
+      return;
+    }
+    await findResult.destroy();
+    res.status(200).json({
+      code: 1,
+      message: '删除成功',
+    });
+  } catch (error) {
+    res.status(500).json({
+      code: 0,
+      message: '内部异常:' + error.message,
+    });
+  }
+};
+
 // 获取多篇文章
 const getMoreArticles = async (req, res) => {
   const { title = '', limit = 10, offset = 0 } = req.body;
@@ -183,10 +209,16 @@ const getArticle = async (req, res) => {
       });
       return;
     }
+    const comments = await Comment.findAndCountAll({
+      where: { ArticleSlug: findResult.slug },
+    });
     res.status(200).json({
       code: 1,
       message: 'ok',
-      data: findResult,
+      data: {
+        ...findResult.dataValues,
+        comments_count: comments.count ?? 0,
+      },
     });
   } catch (error) {
     res.status(500).json({
@@ -197,7 +229,7 @@ const getArticle = async (req, res) => {
 };
 
 // 获取作者的相关文章
-const getOwnerArticles = async (req, res) => {
+const getAuthorArticles = async (req, res) => {
   const { email = '', username = '', limit = 10, offset = 0 } = req.body;
   try {
     const findResult = await User.findOne({
@@ -212,7 +244,6 @@ const getOwnerArticles = async (req, res) => {
       });
       return;
     }
-
     const articleResult = await Article.findAndCountAll({
       attributes: {
         exclude: ['body'],
@@ -241,39 +272,13 @@ const getOwnerArticles = async (req, res) => {
     }
     res.status(200).json({
       code: 1,
-      message: '获取当前用户文章成功',
+      message: '获取当前作者文章成功',
       data: {
         total,
         articles,
         limit: Number(limit),
         offset: Number(offset),
       },
-    });
-  } catch (error) {
-    res.status(500).json({
-      code: 0,
-      message: '内部异常:' + error.message,
-    });
-  }
-};
-
-// 删除文章
-const deleteArticle = async (req, res) => {
-  const email = req?.authorizedEmail || '';
-  const { slug = '' } = req?.body || {};
-  try {
-    const findResult = await Article.findByPk(slug);
-    if (email !== findResult.UserEmail) {
-      res.status(401).json({
-        code: 0,
-        message: '你不是当前文章作者，无法修改',
-      });
-      return;
-    }
-    await findResult.destroy();
-    res.status(200).json({
-      code: 1,
-      message: '删除成功',
     });
   } catch (error) {
     res.status(500).json({
@@ -302,7 +307,6 @@ const getFollowArticle = async (req, res) => {
     const sql = `SELECT UserEmail from followers WHERE followerEmail = '${findResult?.email}'`;
 
     const allFollowed = await sequelizeModel.query(sql, { type: sequelize.QueryTypes.SELECT });
-    console.log(allFollowed);
 
     const allFollowArticles = await Article.findAndCountAll({
       attributes: {
@@ -315,11 +319,24 @@ const getFollowArticle = async (req, res) => {
       offset: Number(offset),
       distinct: true,
     });
+    const articles = [];
+    for (const article of allFollowArticles?.rows) {
+      const { slug = '' } = article;
+      const comments = await Comment.findAndCountAll({
+        where: { ArticleSlug: slug },
+      });
+      articles.push({
+        ...(article?.dataValues || {}),
+        comments_count: comments.count ?? 0,
+      });
+    }
+
     res.status(200).json({
       code: 0,
       message: '获取所关注的作者文章成功',
       data: {
-        allFollowArticles,
+        total: allFollowArticles.count ?? 0,
+        articles,
       },
     });
   } catch (error) {
@@ -334,7 +351,7 @@ module.exports = {
   getMoreArticles,
   createArticles,
   getArticle,
-  getOwnerArticles,
+  getAuthorArticles,
   updateArticle,
   deleteArticle,
   getFollowArticle,

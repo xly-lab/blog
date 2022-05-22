@@ -9,7 +9,7 @@ router.post('/update', authorization, articleController.updateArticle);
 router.post('/delete', authorization, articleController.deleteArticle);
 router.get('/getMore', articleController.getMoreArticles);
 router.get('/get', articleController.getArticle);
-router.get('/getOwner', articleController.getOwnerArticles);
+router.get('/getAuthor', articleController.getAuthorArticles);
 router.get('/getFollow', articleController.getFollowArticle);
 
 module.exports = router;
