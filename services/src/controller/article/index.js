@@ -181,10 +181,10 @@ const getMoreArticles = async (req, res) => {
     }
   );
   try {
-    const findResult = await Article.findAndCountAll(findConditions);
-    const total = findResult.count;
+    const moreArticles = await Article.findAndCountAll(findConditions);
+    const total = moreArticles.count;
     const articles = [];
-    for (let article of findResult?.rows || {}) {
+    for (let article of moreArticles?.rows || {}) {
       const { slug = '' } = article;
       const comments = await Comment.findAndCountAll({
         where: { ArticleSlug: slug },
@@ -219,8 +219,8 @@ const getMoreArticles = async (req, res) => {
 const getArticle = async (req, res) => {
   const { slug = '' } = req.body;
   try {
-    const findResult = await Article.findByPk(slug);
-    if (!findResult) {
+    const article = await Article.findByPk(slug);
+    if (!article) {
       res.status(404).json({
         code: 0,
         message: '文章不存在',
@@ -228,15 +228,15 @@ const getArticle = async (req, res) => {
       return;
     }
     const comments = await Comment.findAndCountAll({
-      where: { ArticleSlug: findResult.slug },
+      where: { ArticleSlug: article.slug },
     });
     res.status(200).json({
       code: 1,
       message: 'ok',
       data: {
-        ...findResult.dataValues,
+        ...article.dataValues,
         comments_count: comments.count ?? 0,
-        like_count: await findResult.countUsers(),
+        like_count: await article.countUsers(),
       },
     });
   } catch (error) {
@@ -251,12 +251,12 @@ const getArticle = async (req, res) => {
 const getAuthorArticles = async (req, res) => {
   const { email = '', username = '', limit = 10, offset = 0 } = req.body;
   try {
-    const findResult = await User.findOne({
+    const user = await User.findOne({
       where: {
         [sequelize.Op.or]: { email, username },
       },
     });
-    if (!findResult) {
+    if (!user) {
       res.status(401).json({
         code: 0,
         message: '当前作者不存在',
@@ -268,7 +268,7 @@ const getAuthorArticles = async (req, res) => {
         exclude: ['body'],
       },
       where: {
-        UserEmail: findResult.email,
+        UserEmail: user.email,
       },
       distinct: true,
       limit: Number(limit),
@@ -312,19 +312,19 @@ const getAuthorArticles = async (req, res) => {
 const getFavoriteArticles = async (req, res) => {
   const { email = '', username = '', limit = 10, offset = 0 } = req.body;
   try {
-    const findResult = await User.findOne({
+    const user = await User.findOne({
       where: {
         [sequelize.Op.or]: { email, username },
       },
     });
-    if (!findResult) {
+    if (!user) {
       res.status(401).json({
         code: 0,
         message: '当前作者不存在',
       });
       return;
     }
-    const sql = `SELECT ArticleSlug from favorites WHERE UserEmail = '${findResult?.email}'`;
+    const sql = `SELECT ArticleSlug from favorites WHERE UserEmail = '${user?.email}'`;
 
     const allArticleSlugs = (await sequelizeModel.query(sql, { type: sequelize.QueryTypes.SELECT })) || [];
 
