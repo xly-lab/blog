@@ -1,4 +1,5 @@
 const User = require('../../init/sql/models/user');
+const sequelize = require('sequelize');
 
 // 关注
 const followUser = async (req, res) => {
@@ -27,9 +28,9 @@ const followUser = async (req, res) => {
         },
       });
     } catch (error) {
-      res.status(500).json({
+      res.status(401).json({
         code: 0,
-        message: '内部异常:' + error.message,
+        message: '已关注,不需要重复关注',
       });
     }
   } catch (error) {
@@ -80,23 +81,18 @@ const followCancel = async (req, res) => {
   }
 };
 
-// 获取关注信息
+// 获取作者关注信息
 const getFollowers = async (req, res) => {
-  const email = req?.authorizedEmail || '';
-  const { username } = req.body;
+  const { email = '', username = '' } = req.body;
   try {
     const followerUsers =
       (await User.findOne({
-        where: { username },
+        where: {
+          [sequelize.Op.or]: { username, email },
+        },
         include: ['followers'],
       })) || [];
-    let following = false;
-    for (const followUser of followerUsers?.followers) {
-      if (followUser.email === email) {
-        following = true;
-        break;
-      }
-    }
+
     const followUsers = followerUsers.followers.map((item) => {
       const { password, Followers, ...otherData } = item?.dataValues || {};
       return otherData;
@@ -106,8 +102,7 @@ const getFollowers = async (req, res) => {
       code: 1,
       message: 'ok',
       data: {
-        ...req.findResult,
-        following,
+        total: followUsers.length,
         followUsers,
       },
     });
@@ -118,8 +113,48 @@ const getFollowers = async (req, res) => {
     });
   }
 };
+
+// 当前用户是否关注了作者
+const isFollow = async (req, res) => {
+  const loggedEmail = req?.authorizedEmail || '';
+  const { email = '', username = '' } = req.body;
+  try {
+    const followerUsers =
+      (await User.findOne({
+        where: {
+          [sequelize.Op.or]: { username, email },
+        },
+        include: ['followers'],
+      })) || [];
+    let following = false;
+    for (const followUser of followerUsers?.followers) {
+      if (followUser.email === loggedEmail) {
+        following = true;
+        break;
+      }
+    }
+
+    res.status(200).json({
+      code: 1,
+      message: 'ok',
+      data: {
+        ...req.findResult,
+        following,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      code: 0,
+      message: '内部异常:' + error.message,
+    });
+  }
+};
+
+// 获取作者被关注的信息
+
 module.exports = {
   followUser,
   followCancel,
   getFollowers,
+  isFollow,
 };
