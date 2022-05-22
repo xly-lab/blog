@@ -3,9 +3,10 @@ const xss = require('xss');
 const Article = require('../../init/sql/models/article');
 const Tag = require('../../init/sql/models/tag');
 const Comment = require('../../init/sql/models/comment');
+const User = require('../../init/sql/models/user');
 const validateArticle = require('./article.validate');
 const makeSlug = require('./article.utils');
-const User = require('../../init/sql/models/user');
+const sequelizeModel = require('../../init/sql/sequelize');
 
 // 创建文章
 const createArticles = async (req, res) => {
@@ -217,14 +218,14 @@ const getOwnerArticles = async (req, res) => {
     const articleResult = await Article.findAndCountAll({
       where: {
         UserEmail: findResult.email,
+        attributes: {
+          exclude: ['body'],
+        },
       },
       distinct: true,
       limit: Number(limit),
       offset: Number(offset),
       include: Tag,
-      attributes: {
-        exclude: ['body'],
-      },
     });
     const total = articleResult?.count ?? 0;
     const articles = [];
@@ -259,13 +260,11 @@ const getOwnerArticles = async (req, res) => {
 };
 
 // 删除文章
-
 const deleteArticle = async (req, res) => {
   const email = req?.authorizedEmail || '';
   const { slug = '' } = req?.body || {};
   try {
     const findResult = await Article.findByPk(slug);
-    console.log(email, findResult.UserEmail);
     if (email !== findResult.UserEmail) {
       res.status(401).json({
         code: 0,
@@ -286,6 +285,53 @@ const deleteArticle = async (req, res) => {
   }
 };
 
+// 获取所关注的作者文章
+const getFollowArticle = async (req, res) => {
+  const { email = '', username = '', limit = 10, offset = 0 } = req.body;
+  try {
+    const findResult = await User.findOne({
+      where: {
+        [sequelize.Op.or]: { email, username },
+      },
+    });
+    if (!findResult) {
+      res.status(401).json({
+        code: 0,
+        message: '当前作者不存在',
+      });
+      return;
+    }
+    const sql = `SELECT UserEmail from followers WHERE followerEmail = '${findResult?.email}'`;
+
+    const allFollowed = await sequelizeModel.query(sql, { type: sequelize.QueryTypes.SELECT });
+    console.log(allFollowed);
+
+    const allFollowArticles = await Article.findAndCountAll({
+      attributes: {
+        exclude: ['body'],
+      },
+      where: {
+        [sequelize.Op.or]: allFollowed,
+      },
+      limit: Number(limit),
+      offset: Number(offset),
+      distinct: true,
+    });
+    res.status(200).json({
+      code: 0,
+      message: '获取所关注的作者文章成功',
+      data: {
+        allFollowArticles,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      code: 0,
+      message: '内部异常:' + error.message,
+    });
+  }
+};
+
 module.exports = {
   getMoreArticles,
   createArticles,
@@ -293,4 +339,5 @@ module.exports = {
   getOwnerArticles,
   updateArticle,
   deleteArticle,
+  getFollowArticle,
 };
