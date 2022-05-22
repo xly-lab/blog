@@ -200,13 +200,11 @@ const getArticle = async (req, res) => {
 const getOwnerArticles = async (req, res) => {
   const { email = '', username = '', limit = 10, offset = 0 } = req.body;
   try {
-    const findResult =
-      (await User.findByPk(email)) ||
-      (await User.findOne({
-        where: {
-          username,
-        },
-      }));
+    const findResult = await User.findOne({
+      where: {
+        [sequelize.Op.or]: { email, username },
+      },
+    });
     if (!findResult) {
       res.status(401).json({
         code: 0,
@@ -216,11 +214,11 @@ const getOwnerArticles = async (req, res) => {
     }
 
     const articleResult = await Article.findAndCountAll({
+      attributes: {
+        exclude: ['body'],
+      },
       where: {
         UserEmail: findResult.email,
-        attributes: {
-          exclude: ['body'],
-        },
       },
       distinct: true,
       limit: Number(limit),
