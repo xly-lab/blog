@@ -176,6 +176,7 @@ const getMoreArticles = async (req, res) => {
         ...article.dataValues,
         Tags: article?.Tags?.map((tag) => tag.name) || [],
         comments_count: comments.count ?? 0,
+        like_count: await article.countUsers(),
       };
       articles.push(article);
     }
@@ -218,6 +219,7 @@ const getArticle = async (req, res) => {
       data: {
         ...findResult.dataValues,
         comments_count: comments.count ?? 0,
+        like_count: await findResult.countUsers(),
       },
     });
   } catch (error) {
@@ -267,6 +269,7 @@ const getAuthorArticles = async (req, res) => {
         ...article.dataValues,
         Tags: article?.Tags?.map((tag) => tag.name) || [],
         comments_count: comments.count ?? 0,
+        like_count: await article.countUsers(),
       };
       articles.push(article);
     }
@@ -288,8 +291,8 @@ const getAuthorArticles = async (req, res) => {
   }
 };
 
-// 获取所关注的作者文章
-const getFollowArticle = async (req, res) => {
+// 获取所喜欢的文章
+const getFavoriteArticles = async (req, res) => {
   const { email = '', username = '', limit = 10, offset = 0 } = req.body;
   try {
     const findResult = await User.findOne({
@@ -304,23 +307,23 @@ const getFollowArticle = async (req, res) => {
       });
       return;
     }
-    const sql = `SELECT UserEmail from followers WHERE followerEmail = '${findResult?.email}'`;
+    const sql = `SELECT ArticleSlug from favorites WHERE UserEmail = '${findResult?.email}'`;
 
-    const allFollowed = await sequelizeModel.query(sql, { type: sequelize.QueryTypes.SELECT });
+    const allArticleSlugs = (await sequelizeModel.query(sql, { type: sequelize.QueryTypes.SELECT })) || [];
 
-    const allFollowArticles = await Article.findAndCountAll({
+    const allFavoriteArticles = await Article.findAndCountAll({
       attributes: {
         exclude: ['body'],
       },
       where: {
-        [sequelize.Op.or]: allFollowed,
+        [sequelize.Op.or]: allArticleSlugs.map((article) => ({ slug: article.ArticleSlug })),
       },
       limit: Number(limit),
       offset: Number(offset),
       distinct: true,
     });
     const articles = [];
-    for (const article of allFollowArticles?.rows) {
+    for (const article of allFavoriteArticles?.rows) {
       const { slug = '' } = article;
       const comments = await Comment.findAndCountAll({
         where: { ArticleSlug: slug },
@@ -328,6 +331,7 @@ const getFollowArticle = async (req, res) => {
       articles.push({
         ...(article?.dataValues || {}),
         comments_count: comments.count ?? 0,
+        like_count: await article.countUsers(),
       });
     }
 
@@ -335,7 +339,7 @@ const getFollowArticle = async (req, res) => {
       code: 0,
       message: '获取所关注的作者文章成功',
       data: {
-        total: allFollowArticles.count ?? 0,
+        total: allFavoriteArticles.count ?? 0,
         articles,
       },
     });
@@ -354,5 +358,5 @@ module.exports = {
   getAuthorArticles,
   updateArticle,
   deleteArticle,
-  getFollowArticle,
+  getFavoriteArticles,
 };

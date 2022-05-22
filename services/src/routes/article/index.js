@@ -10,6 +10,6 @@ router.post('/delete', authorization, articleController.deleteArticle);
 router.get('/getMore', articleController.getMoreArticles);
 router.get('/get', articleController.getArticle);
 router.get('/getAuthor', articleController.getAuthorArticles);
-router.get('/getFollow', articleController.getFollowArticle);
+router.get('/getFollow', articleController.getFavoriteArticles);
 
 module.exports = router;
