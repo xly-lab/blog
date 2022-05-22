@@ -105,7 +105,6 @@ const updateArticle = async (req, res) => {
       const comments = await Comment.findAndCountAll({
         where: { ArticleSlug: successArticle.slug },
       });
-      console.log(successArticle.__proto__);
       const Tags = successArticle?.Tags?.map((item) => item.name);
       res.status(200).json({
         code: 1,

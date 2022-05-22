@@ -161,7 +161,6 @@ const beFollowed = async (req, res) => {
           [sequelize.Op.or]: { username, email },
         },
       })) || [];
-    console.log('followerUsers', followerUsers);
     const sql = `SELECT UserEmail from followers WHERE followerEmail = '${followerUsers?.email}'`;
 
     const result = await sequelizeModel.query(sql, { type: sequelize.QueryTypes.SELECT });

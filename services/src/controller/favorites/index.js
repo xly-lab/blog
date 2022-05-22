@@ -49,8 +49,6 @@ const cancelFavorites = async (req, res) => {
     }
     const user = await User.findByPk(loggedEmail);
 
-    console.log(user.email);
-
     const removeResult = await article.removeUsers(user.email);
 
     if (removeResult) {

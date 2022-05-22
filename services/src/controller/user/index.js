@@ -18,7 +18,7 @@ const getInfo = async (req, res) => {
       code: 1,
       message: 'ok',
       data: {
-        ...(loggedUserInfo || {}),
+        ...(loggedUserInfo?.dataValues || {}),
       },
     });
   } catch (error) {
@@ -31,8 +31,8 @@ const getInfo = async (req, res) => {
 
 // 用户注册
 const create = async (req, res) => {
-  const user = req?.body || {};
-  const { result, errMsg } = validateUserInfo(user);
+  const { username = '', password = '', email = '', avatar = '', dio = '' } = req?.body || {};
+  const { result, errMsg } = validateUserInfo({ username, password, email });
   if (!result) {
     res.status(401).json({
       code: 0,
@@ -42,9 +42,9 @@ const create = async (req, res) => {
   }
 
   try {
-    const user = await User.findByPk(user?.email || '');
+    const existUser = await User.findByPk(email);
 
-    if (user) {
+    if (existUser) {
       res.status(401).json({
         code: 0,
         message: '用户已注册',
@@ -59,7 +59,6 @@ const create = async (req, res) => {
   }
 
   try {
-    const { username, password, email, avatar, dio } = user;
     const createResult = await User.create({ username, password, email, avatar, dio });
     makeToken(createResult?.dataValues, res, '用户注册成功');
   } catch (error) {
