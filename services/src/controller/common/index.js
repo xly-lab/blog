@@ -25,7 +25,7 @@ const authorization = async (req, res, next) => {
       const user = await User.findByPk(req.authorizedEmail, {
         attributes: { exclude: ['password'] },
       });
-      req.findResult = user.dataValues;
+      req.loggedUserInfo = user.dataValues;
       if (user) {
         next();
       } else {

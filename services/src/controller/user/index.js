@@ -5,9 +5,9 @@ const makeToken = require('./user.utils');
 
 // 获取用户信息
 const getInfo = async (req, res) => {
-  const findResult = req.findResult || {};
+  const loggedUserInfo = req.loggedUserInfo || {};
   try {
-    if (!findResult) {
+    if (!loggedUserInfo) {
       res.status(401).json({
         code: 0,
         message: '用户未注册',
@@ -18,7 +18,7 @@ const getInfo = async (req, res) => {
       code: 1,
       message: 'ok',
       data: {
-        ...(findResult || {}),
+        ...(loggedUserInfo || {}),
       },
     });
   } catch (error) {

@@ -19,7 +19,7 @@ const followUser = async (req, res) => {
       return;
     }
     try {
-      const userFocusOn = req.findResult;
+      const userFocusOn = req.loggedUserInfo;
       await userBeFocusOn.addFollowers(userFocusOn);
       res.status(200).json({
         code: 1,
@@ -59,7 +59,7 @@ const followCancel = async (req, res) => {
       return;
     }
     try {
-      const userFocusOn = req.findResult;
+      const userFocusOn = req.loggedUserInfo;
       await userBeFocusOn.removeFollowers(userFocusOn);
       res.status(200).json({
         code: 1,
@@ -139,7 +139,7 @@ const isFollow = async (req, res) => {
       code: 1,
       message: 'ok',
       data: {
-        ...req.findResult,
+        ...req.loggedUserInfo,
         following,
       },
     });
