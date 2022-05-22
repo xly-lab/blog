@@ -131,15 +131,22 @@ const deleteArticle = async (req, res) => {
   const email = req?.authorizedEmail || '';
   const { slug = '' } = req?.body || {};
   try {
-    const findResult = await Article.findByPk(slug);
-    if (email !== findResult.UserEmail) {
+    const article = await Article.findByPk(slug);
+    if (!article) {
+      res.status(404).json({
+        code: 0,
+        message: '所删除文章不存在',
+      });
+      return;
+    }
+    if (email !== article.UserEmail) {
       res.status(401).json({
         code: 0,
         message: '你不是当前文章作者，无法修改',
       });
       return;
     }
-    await findResult.destroy();
+    await article.destroy();
     res.status(200).json({
       code: 1,
       message: '删除成功',
