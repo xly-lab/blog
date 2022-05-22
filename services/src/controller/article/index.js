@@ -67,27 +67,28 @@ const updateArticle = async (req, res) => {
     });
   }
   try {
-    const findResult = await Article.findByPk(slug, {
+    const article = await Article.findByPk(slug, {
       include: Tag,
     });
-    if (email !== findResult.UserEmail) {
-      res.status(401).json({
-        code: 0,
-        message: '你不是当前文章作者，无法修改',
-      });
-      return;
-    }
-    if (!findResult) {
+    if (!article) {
       res.status(404).json({
         code: 0,
         message: '所更新文章不存在',
       });
       return;
     }
-    const updateResult = await findResult.update({ tags, title, description: xss(description), body: xss(body) });
+    if (email !== article?.UserEmail) {
+      res.status(401).json({
+        code: 0,
+        message: '你不是当前文章作者，无法修改',
+      });
+      return;
+    }
+
+    const updateResult = await article.update({ tags, title, description: xss(description), body: xss(body) });
     // 标签处理
     // 1 删除没有的标签
-    for (const name of findResult?.Tags?.map((item) => item.name)) {
+    for (const name of article?.Tags?.map((item) => item.name)) {
       await updateResult.removeTag(name);
     }
     // 2 重新关联文章对应的标签
@@ -101,11 +102,20 @@ const updateArticle = async (req, res) => {
 
     if (updateResult) {
       const successArticle = await Article.findByPk(slug, { include: Tag });
+      const comments = await Comment.findAndCountAll({
+        where: { ArticleSlug: successArticle.slug },
+      });
+      console.log(successArticle.__proto__);
       const Tags = successArticle?.Tags?.map((item) => item.name);
       res.status(200).json({
         code: 1,
         message: '文章创建成功',
-        data: { ...successArticle.dataValues, Tags },
+        data: {
+          ...successArticle.dataValues,
+          Tags,
+          comments_count: comments.count ?? 0,
+          like_count: await successArticle.countUsers(),
+        },
       });
     }
   } catch (error) {
