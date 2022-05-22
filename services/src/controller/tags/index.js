@@ -23,9 +23,9 @@ const getTags = async (req, res) => {
 const createTag = async (req, res) => {
   const { tagName: name } = req.body;
   try {
-    const findResult = await Tag.findByPk(name);
+    const tag = await Tag.findByPk(name);
 
-    if (findResult) {
+    if (tag) {
       res.status(401).json({
         code: 0,
         message: '标签已存在',
@@ -34,6 +34,10 @@ const createTag = async (req, res) => {
     }
     try {
       const createResult = await Tag.create({ name });
+      if (!createResult) {
+        res.status(400).json({ code: 1, message: '创建标签失败' });
+        return;
+      }
       res.status(200).json({ code: 1, message: '标签创建成功' });
     } catch (error) {
       res.status(500).json({

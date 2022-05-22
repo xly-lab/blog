@@ -1,5 +1,6 @@
 const User = require('../../init/sql/models/user');
 const validateUserInfo = require('./user.validator');
+const sequelize = require('sequelize');
 const makeToken = require('./user.utils');
 
 // 获取用户信息
@@ -41,9 +42,9 @@ const create = async (req, res) => {
   }
 
   try {
-    const findResult = await User.findByPk(user?.email || '');
+    const user = await User.findByPk(user?.email || '');
 
-    if (findResult) {
+    if (user) {
       res.status(401).json({
         code: 0,
         message: '用户已注册',
@@ -71,8 +72,8 @@ const create = async (req, res) => {
 
 // 用户登录
 const login = async (req, res) => {
-  const user = req?.body || { username: '' };
-  const { result, errMsg } = validateUserInfo(user);
+  const { username = '', email = '', password = '' } = req?.body;
+  const { result, errMsg } = validateUserInfo({ username, email, password });
   if (!result) {
     res.status(401).json({
       code: 0,
@@ -81,16 +82,12 @@ const login = async (req, res) => {
     return;
   }
   try {
-    let findResult = await User.findByPk(user?.email || '');
-    if (!findResult) {
-      findResult = await User.findOne({
-        where: {
-          username: user?.username || '',
-        },
-      });
-    }
-
-    if (!findResult) {
+    const user = await User.findOne({
+      where: {
+        [sequelize.Op.or]: { email, username },
+      },
+    });
+    if (!user) {
       res.status(401).json({
         code: 0,
         message: '用户未注册',
@@ -98,16 +95,16 @@ const login = async (req, res) => {
       return;
     }
 
-    const { password } = findResult?.dataValues || {};
+    const { password: oldPass } = user?.dataValues || {};
 
-    if (password !== user.password) {
+    if (oldPass !== password) {
       res.status(403).json({
         code: 0,
         message: '密码错误',
       });
       return;
     }
-    makeToken(findResult?.dataValues, res, '登录成功');
+    makeToken(user?.dataValues, res, '登录成功');
   } catch (error) {
     res.status(500).json({
       code: 0,
@@ -117,19 +114,35 @@ const login = async (req, res) => {
 };
 
 const update = async (req, res) => {
-  const user = req?.body || {};
-  const email = req?.authorizedEmail || '';
-  try {
-    const result = await User.update(user, {
-      where: {
-        email,
-      },
+  const { username = '', password = '', email = '', avatar = '', dio = '' } = req?.body || {};
+  const loggedEmail = req?.authorizedEmail || '';
+  if (loggedEmail !== email) {
+    res.status(401).json({
+      code: 0,
+      message: '信息不匹配',
     });
-    if (String(result) === '1') {
-      try {
-        const findResult = await User.findByPk(email || '');
-        makeToken(findResult?.dataValues, res, '用户信息更新成功');
-      } catch (error) {}
+    return;
+  }
+  const { result, errMsg } = validateUserInfo({ username, email, password });
+  if (!result) {
+    res.status(401).json({
+      code: 0,
+      message: String(Object.values(errMsg)),
+    });
+    return;
+  }
+  try {
+    const updateResult = await User.update(
+      { username, password, avatar, dio },
+      {
+        where: {
+          email,
+        },
+      }
+    );
+    if (String(updateResult) === '1') {
+      const user = await User.findByPk(email || '');
+      makeToken(user?.dataValues, res, '用户信息更新成功');
     }
   } catch (error) {
     res.status(500).json({

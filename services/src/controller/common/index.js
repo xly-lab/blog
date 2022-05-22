@@ -22,11 +22,11 @@ const authorization = async (req, res, next) => {
   }
   try {
     try {
-      const findResult = await User.findByPk(req.authorizedEmail, {
+      const user = await User.findByPk(req.authorizedEmail, {
         attributes: { exclude: ['password'] },
       });
-      req.findResult = findResult.dataValues;
-      if (findResult) {
+      req.findResult = user.dataValues;
+      if (user) {
         next();
       } else {
         res.status(401).json({
