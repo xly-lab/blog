@@ -141,7 +141,7 @@ const deleteArticle = async (req, res) => {
     if (email !== article.UserEmail) {
       res.status(401).json({
         code: 0,
-        message: '你不是当前文章作者，无法修改',
+        message: '你不是当前文章作者，无法删除',
       });
       return;
     }

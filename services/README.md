@@ -11,3 +11,11 @@
       { type: sequelize.QueryTypes.SELECT } // 不查元数据
     );
 ```
+
+#### 知识点1：数据库模型建立一对多关系是 sequelize 操作
+
+```
+  modelA.hasMany(modelB) // 模型A有多个模型B
+  modelB.belongsTo(modelA) // 模型B只属于一个模型A
+
+```
