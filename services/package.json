@@ -7,7 +7,9 @@
   "license": "MIT",
   "scripts": {
     "start": "nodemon ./",
-    "start:local": "cross-env NODE_ENV=local  nodemon --trace-deprecation ./ "
+    "start:local": "cross-env NODE_ENV=local  nodemon --trace-deprecation ./ ",
+    "start:pm2": "cross-env NODE_ENV=local  pm2 start  ./ ",
+    "delete:pm2": "pm2 delete all "
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -25,6 +27,7 @@
   "devDependencies": {
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.1",
-    "nodemon": "^2.0.16"
+    "nodemon": "^2.0.16",
+    "pm2": "^5.2.0"
   }
 }
