@@ -12,9 +12,11 @@ const initRouter = require('./src/routes');
 const app = express();
 
 // 中间件
-app.use(cors()); // 跨域
+app.use(cors({ credentials: true, origin: true })); // 跨域
 app.use(express.json()); // 解析
 app.use(morgan('short')); // 请求日志
+
+app.use(express.static('./public'));
 
 const main = async () => {
   // 连接数据库
