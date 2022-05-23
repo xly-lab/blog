@@ -3,6 +3,7 @@ const followController = require('./follow');
 const tagsController = require('./tags');
 const articleController = require('./article');
 const favoritesController = require('./favorites');
+const commentController = require('./comment');
 
 module.exports = {
   userController,
@@ -10,4 +11,5 @@ module.exports = {
   tagsController,
   articleController,
   favoritesController,
+  commentController,
 };
