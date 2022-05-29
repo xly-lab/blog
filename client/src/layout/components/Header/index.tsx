@@ -16,7 +16,9 @@ const Logo = styled.div`
 
 export default function Header() {
   return (
-    <div className={`h-12 bg-blue-200  flex flex-row justify-between items-center px-4 min-w-max fixed w-full top-0`}>
+    <div
+      className={`h-12 bg-blue-200  flex flex-row justify-between items-center px-4 min-w-max fixed w-full top-0 z-10`}
+    >
       <Logo className="animate-pulse">No Dream</Logo>
       <div className="space-x-2 hidden  sm:block ">
         <Link to="/">
