@@ -1,4 +1,5 @@
 import React from 'react';
+import ScrollTop from '../../../components/ScrollTop';
 import Side from './components/Side';
 import style from './index.module.scss';
 
@@ -25,6 +26,7 @@ export default function Main({ children }: Props) {
       <div className="sm:hidden block w-full ">{children}</div>
       <div className={`sm:block hidden ${style.maxWidth} `}>{children}</div>
       <Side />
+      <ScrollTop />
     </div>
   );
 }

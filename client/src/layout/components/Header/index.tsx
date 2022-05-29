@@ -9,15 +9,18 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Chip, IconButton } from '@mui/material';
 import { Link } from 'react-router-dom';
 import React from 'react';
+import useScroll from '../../../hooksComponents/Scroll';
 
 const Logo = styled.div`
   font-weight: bold;
 `;
 
 export default function Header() {
+  const winSize = useScroll();
   return (
     <div
-      className={`h-12 bg-blue-200  flex flex-row justify-between items-center px-4 min-w-max fixed w-full top-0 z-10`}
+      className={`h-12 bg-blue-200  flex flex-row justify-between items-center px-4 min-w-max fixed w-full top-0 z-10 transition-transform`}
+      style={{ transform: winSize.height > 100 ? 'translateY(-100px)' : 'translateY(0px)' }}
     >
       <Logo className="animate-pulse">No Dream</Logo>
       <div className="space-x-2 hidden  sm:block ">
