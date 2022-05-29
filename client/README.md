@@ -1,46 +1,36 @@
-# Getting Started with Create React App
+## Blog 前端建设笔记
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### 2022/5/29 
 
-## Available Scripts
+### tailwind 使用：
 
-In the project directory, you can run:
+1. 用的 `create-react-app` 建的项目参考的官网的步骤安装的 [tailwind](https://www.tailwindcss.cn/docs/guides/create-react-app) 
+2. 运行时报错，网上查了下说的是 `tailwind` 的 `craco` 不支持最新的`create-react-app` ,升级` @craco/craco` 到 `7.0.0-alpha.3` 就可以了，后续应该是支持的
+3. index.css 引入下面的没起作用
 
-### `npm start`
+```
+    /* ./src/index.css */
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+```
+    改成了这样,算是可以了：
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```
+@import 'tailwindcss/dist/base';
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+@import 'tailwindcss/dist/components';
 
-### `npm test`
+@import 'tailwindcss/dist/utilities';
+```
+4. 网上有些方法自定义写发 `bg-[#xxx]` `w-[xx px]` 没有作用,有点难受，也没找到解决办法,导致我响应式做的有点挫
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+### Router 使用
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. 路由变化了，但是页面没有变化，最直接的解决办法 更组件上的 `React.StrictMode` 去掉就解决了，找了半天也没有更好的解决办法，其他要么说 是不是没有引入 `Switch` ，要不就是说多套了一次 `Router` ，与我的不对应;
+2. `react-router-dom` 与 `react-router-config` 版本不对应用不了，只能将`react-router-dom` 降级到 `5.2.1`，后续看能不能不降级，就不使用 `react-router-config` 了
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### scroll 方法
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+window.scrollTo(0,0)
