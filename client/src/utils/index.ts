@@ -20,4 +20,7 @@ export function scroll(currentY: number, targetY: number) {
     }
   }, 1);
 }
-// 暴露此方法
+
+export function randomNumber(): Number {
+  return parseInt(String(Math.random() * 8));
+}
