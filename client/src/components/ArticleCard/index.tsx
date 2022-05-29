@@ -48,7 +48,9 @@ function Container() {
         className="flex 
       flex-row items-center
       sm:space-x-1 space-y-1
-      text-sm "
+      text-sm 
+      truncate
+      w-max"
       >
         <EventNoteIcon
           fontSize="small"
@@ -70,7 +72,8 @@ function Container() {
         className="flex 
       flex-row items-center
       sm:space-x-1 space-y-1
-      text-sm "
+      truncate
+      text-sm w-max"
       >
         <FolderOpenIcon
           fontSize="small"
