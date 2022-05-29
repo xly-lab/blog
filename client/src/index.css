@@ -11,3 +11,8 @@
   src: url('./assets/fonts/851手書き雑フォント.ttf') format('truetype');
 }
 
+html * {
+  font-family: Blog txt !important;
+  font-weight: bold;
+}
+

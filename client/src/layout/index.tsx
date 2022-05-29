@@ -9,7 +9,7 @@ import style from './index.module.scss';
 function Layout(props: RouteConfigComponentProps<any>) {
   const Component = props.route?.component;
   return (
-    <div className={`h-screen bg-green-300 ${style.global}`}>
+    <div className={`bg-blue-200 ${style.global}`}>
       <Header />
       <Main>{Component ? <Component {...props} /> : null}</Main>
       <Footer />
