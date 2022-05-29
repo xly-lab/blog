@@ -9,5 +9,12 @@
     button.MuiButtonBase-root.MuiIconButton-root.MuiIconButton-sizeMedium {
       position: static;
     }
+    .text-hidden {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+    }
   }
 }
