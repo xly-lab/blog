@@ -1,16 +1,13 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@import 'tailwindcss/dist/base';
+
+@import 'tailwindcss/dist/components';
+
+@import 'tailwindcss/dist/utilities';
+
+@import '//at.alicdn.com/t/font_3435856_87h0wu7zql6.css';
+
+@font-face {
+  font-family: Blog txt;
+  src: url('./assets/fonts/851手書き雑フォント.ttf') format('truetype');
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
