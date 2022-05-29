@@ -30,12 +30,10 @@ export default function ArticleCard() {
           alt=""
         />
       </div>
-      <div
-        className={`sm:flex hidden ${style.right} overflow-hidden  flex-col justify-evenly transition-all duration-300`}
-      >
+      <div className={`sm:flex hidden ${style.right} overflow-hidden  flex-col justify-evenly p-2`}>
         <Container />
       </div>
-      <div className="sm:hidden  w-full overflow-hidden flex flex-col justify-evenly transition-all duration-300">
+      <div className="sm:hidden  w-full overflow-hidden flex flex-col justify-evenly p-2">
         <Container />
       </div>
     </div>
@@ -48,66 +46,54 @@ function Container() {
       <div className="text-xl cursor-pointer">Nginx代理阿里云OSS免流</div>
       <div
         className="flex 
-      sm:flex-row flex-col 
-      sm:items-center items-start 
+      flex-row items-center
       sm:space-x-1 space-y-1
       text-sm "
       >
-        <span className="text-gray-400">
-          <EventNoteIcon
-            fontSize="small"
-            sx={{
-              color: blue[300],
-            }}
-          />
-          发布于 2021-11-22 |
-        </span>
+        <EventNoteIcon
+          fontSize="small"
+          sx={{
+            color: blue[300],
+          }}
+        />
+        <span className="text-gray-400">发布于 2021-11-22 |</span>
 
-        <span className="text-gray-400">
-          <UpdateIcon
-            fontSize="small"
-            sx={{
-              color: blue[300],
-            }}
-          />
-          更新于 5 个月前
-        </span>
+        <UpdateIcon
+          fontSize="small"
+          sx={{
+            color: blue[300],
+          }}
+        />
+        <span className="text-gray-400">更新于 5 个月前</span>
       </div>
       <div
         className="flex 
-      sm:flex-row flex-col 
-      sm:items-center items-start 
+      flex-row items-center
       sm:space-x-1 space-y-1
       text-sm "
       >
-        <span className="text-gray-400">
-          <FolderOpenIcon
-            fontSize="small"
-            sx={{
-              color: blue[300],
-            }}
-          />
-          Liunx 工具 |
-        </span>
-        <span className="text-gray-400">
-          <LocalOfferIcon
-            fontSize="small"
-            sx={{
-              color: blue[300],
-            }}
-          />
-          webp 阿里云 oss nginx
-        </span>
+        <FolderOpenIcon
+          fontSize="small"
+          sx={{
+            color: blue[300],
+          }}
+        />
+        <span className="text-gray-400">Liunx 工具 |</span>
+        <LocalOfferIcon
+          fontSize="small"
+          sx={{
+            color: blue[300],
+          }}
+        />
+        <span className="text-gray-400">webp 阿里云 oss nginx</span>
 
-        <span className="text-gray-400">
-          <ChatIcon
-            fontSize="small"
-            sx={{
-              color: blue[300],
-            }}
-          />{' '}
-          2 评论
-        </span>
+        <ChatIcon
+          fontSize="small"
+          sx={{
+            color: blue[300],
+          }}
+        />
+        <span className="text-gray-400">2 评论</span>
       </div>
       <div className="break-normal text-hidden">
         If true, the text will not wrap, but instead will truncate with a text overflow ellipsis. Note that text

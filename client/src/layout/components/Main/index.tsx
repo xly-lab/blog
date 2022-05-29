@@ -20,11 +20,10 @@ export default function Main({ children }: Props) {
       sm:space-y-0 space-y-4 
       sm:items-start items-center
       sm:justify-center justify-start 
-      transition-all duration-300
       `}
     >
-      <div className="sm:hidden block w-full transition-all duration-300">{children}</div>
-      <div className={`sm:block hidden ${style.maxWidth} transition-all duration-300`}>{children}</div>
+      <div className="sm:hidden block w-full ">{children}</div>
+      <div className={`sm:block hidden ${style.maxWidth} `}>{children}</div>
       <Side />
     </div>
   );
