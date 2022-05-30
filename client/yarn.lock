@@ -2207,6 +2207,13 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-lazyload@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.npmmirror.com/@types/react-lazyload/-/react-lazyload-3.2.0.tgz#b763f8f0c724df2c969d7e0b3a56c6aa2720fa1f"
+  integrity sha512-4+r+z8Cf7L/mgxA1vl5uHx5GS/8gY2jqq2p5r5WCm+nUsg9KilwQ+8uaJA3EUlLj57AOzOfGGwwRJ5LOVl8fwA==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-router-config@^5.0.6":
   version "5.0.6"
   resolved "https://registry.npmmirror.com/@types/react-router-config/-/react-router-config-5.0.6.tgz#87c5c57e72d241db900d9734512c50ccec062451"
@@ -7720,6 +7727,11 @@ react-is@^18.0.0:
   version "18.1.0"
   resolved "https://registry.npmmirror.com/react-is/-/react-is-18.1.0.tgz#61aaed3096d30eacf2a2127118b5b41387d32a67"
   integrity sha512-Fl7FuabXsJnV5Q1qIOQwx/sagGF18kogb4gpfcG4gjLBWO0WDiiz1ko/ExayuxE7InyQkBLkxRFG5oxY6Uu3Kg==
+
+react-lazyload@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.npmmirror.com/react-lazyload/-/react-lazyload-3.2.0.tgz#497bd06a6dbd7015e3376e1137a67dc47d2dd021"
+  integrity sha512-zJlrG8QyVZz4+xkYZH5v1w3YaP5wEFaYSUWC4CT9UXfK75IfRAIEdnyIUF+dXr3kX2MOtL1lUaZmaQZqrETwgw==
 
 react-refresh@^0.11.0:
   version "0.11.0"

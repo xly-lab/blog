@@ -15,25 +15,25 @@ export default function ArticleCard() {
       w-full 
       rounded 
       flex 
-      sm:flex-row flex-col
-      sm:justify-start justify-center
+       md:flex-row flex-col
+       md:justify-start justify-center
       items-start 
       space-y-4 
       box-border
       overflow-hidden
       "
     >
-      <div className={`w-full sm:w-60 h-60 bg-center bg-cover overflow-hidden `}>
+      <div className={`w-full  md:w-60 h-60 bg-center bg-cover overflow-hidden `}>
         <img
           src={img}
           className="w-full h-full transform  hover:scale-110 duration-300 transition-transform m-auto object-contain"
           alt=""
         />
       </div>
-      <div className={`sm:flex hidden ${style.right} overflow-hidden  flex-col justify-evenly p-2`}>
+      <div className={` md:flex hidden ${style.right} overflow-hidden  flex-col justify-evenly p-2`}>
         <Container />
       </div>
-      <div className="sm:hidden  w-full overflow-hidden flex flex-col justify-evenly p-2">
+      <div className=" md:hidden  w-full overflow-hidden flex flex-col justify-evenly p-2">
         <Container />
       </div>
     </div>
@@ -47,7 +47,7 @@ function Container() {
       <div
         className="flex 
       flex-row items-center
-      sm:space-x-1 space-y-1
+       md:space-x-1 space-y-1
       text-sm 
       truncate
       w-max"
@@ -71,7 +71,7 @@ function Container() {
       <div
         className="flex 
       flex-row items-center
-      sm:space-x-1 space-y-1
+       md:space-x-1 space-y-1
       truncate
       text-sm w-max"
       >

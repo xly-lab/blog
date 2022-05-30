@@ -6,7 +6,7 @@ import UserInfo from './components/UserInfo';
 
 export default function Side() {
   return (
-    <div className="sm:w-72 w-full space-y-6 overflow-hidden">
+    <div className=" md:w-72 w-full space-y-6 overflow-hidden">
       <UserInfo />
       <Notice />
       <LastArticle />

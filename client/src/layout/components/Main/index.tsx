@@ -16,15 +16,15 @@ export default function Main({ children }: Props) {
       m-auto 
       p-2
       box-border
-      sm:flex-row flex-col 
-      sm:space-x-4 space-x-0 
-      sm:space-y-0 space-y-4 
-      sm:items-start items-center
-      sm:justify-center justify-start 
+      md:flex-row flex-col 
+      md:space-x-4 space-x-0 
+      md:space-y-0 space-y-4 
+      md:items-start items-center
+      md:justify-center justify-start 
       `}
     >
-      <div className="sm:hidden block w-full ">{children}</div>
-      <div className={`sm:block hidden ${style.maxWidth} `}>{children}</div>
+      <div className="md:hidden block w-full ">{children}</div>
+      <div className={`md:block hidden ${style.maxWidth} `}>{children}</div>
       <Side />
       <ScrollTop />
     </div>
