@@ -17,13 +17,16 @@ export default function Home() {
     try {
       setStatus('start');
       const res = await services.article.getMoreArticle({ limit, offset });
+      console.log(res);
       if (res?.data?.code === 1) {
         setLimit(res.data?.data?.limit ?? 1);
         setOffset(res.data?.data?.offset ?? 0);
         setTotal(res.data?.data?.total ?? 10);
         setArticle(res.data?.data?.articles ?? []);
+        setStatus('ok');
+      } else {
+        setStatus('fail');
       }
-      setStatus('ok');
     } catch (error) {
       setStatus('fail');
     }
