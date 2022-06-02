@@ -5,9 +5,10 @@ import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import UpdateIcon from '@mui/icons-material/Update';
 import { blue } from '@mui/material/colors';
 import React from 'react';
+import { Article } from '../../interface/Article';
 import img from './imgs/art_img.jpg';
 import style from './index.module.scss';
-export default function ArticleCard() {
+export default function ArticleCard({ article }: { article: Article }) {
   return (
     <div
       className="
@@ -31,19 +32,19 @@ export default function ArticleCard() {
         />
       </div>
       <div className={` md:flex hidden ${style.right} overflow-hidden  flex-col justify-evenly p-2`}>
-        <Container />
+        <Container article={article} />
       </div>
       <div className=" md:hidden  w-full overflow-hidden flex flex-col justify-evenly p-2">
-        <Container />
+        <Container article={article} />
       </div>
     </div>
   );
 }
 
-function Container() {
+function Container({ article }: { article: Article }) {
   return (
     <>
-      <div className="text-xl cursor-pointer">Nginx代理阿里云OSS免流</div>
+      <div className="text-xl cursor-pointer">{article.title}</div>
       <div
         className="flex 
       flex-row items-center
@@ -58,7 +59,7 @@ function Container() {
             color: blue[300],
           }}
         />
-        <span className="text-gray-400">发布于 2021-11-22 |</span>
+        <span className="text-gray-400">发布于 {article.createdAt} |</span>
 
         <UpdateIcon
           fontSize="small"
@@ -66,7 +67,7 @@ function Container() {
             color: blue[300],
           }}
         />
-        <span className="text-gray-400">更新于 5 个月前</span>
+        <span className="text-gray-400">更新于{article.updatedAt}</span>
       </div>
       <div
         className="flex 
@@ -88,7 +89,11 @@ function Container() {
             color: blue[300],
           }}
         />
-        <span className="text-gray-400">webp 阿里云 oss nginx</span>
+        <span className="text-gray-400">
+          {article?.Tags?.map((item) => (
+            <span>{item}</span>
+          ))}
+        </span>
 
         <ChatIcon
           fontSize="small"
@@ -96,13 +101,9 @@ function Container() {
             color: blue[300],
           }}
         />
-        <span className="text-gray-400">2 评论</span>
+        <span className="text-gray-400">{article.comments_count} 评论</span>
       </div>
-      <div className="break-normal text-hidden">
-        If true, the text will not wrap, but instead will truncate with a text overflow ellipsis. Note that text
-        overflow can only happen with block or inline-block level elements (the element needs to have a width in order
-        to overflow).
-      </div>
+      <div className="break-normal text-hidden">{article.description}</div>
     </>
   );
 }
