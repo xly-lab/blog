@@ -13,7 +13,7 @@ import BugReportIcon from '@mui/icons-material/BugReport';
 import CatchingPokemonIcon from '@mui/icons-material/CatchingPokemon';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import EngineeringIcon from '@mui/icons-material/Engineering';
-import { Chip } from '@mui/material';
+import { Chip, Link } from '@mui/material';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import CodeIcon from '@mui/icons-material/Code';
 import React, { useMemo } from 'react';
@@ -147,17 +147,22 @@ export default function About() {
           <li className="flex">
             <span className="mr-2 w-28 space-x-4">
               <GitHubIcon />
-              <a href="https://github.com/xly-lab" target="_blank" rel="noreferrer">
+              <Link href="https://github.com/xly-lab" target="_blank" rel="noreferrer" color="inherit">
                 github
-              </a>
+              </Link>
             </span>
           </li>
           <li className="flex">
             <span className="mr-2 w-28 space-x-4">
               <CodeIcon />
-              <a href="https://blog.csdn.net/weixin_43480867?type=blog" target="_blank" rel="noreferrer">
+              <Link
+                color="inherit"
+                href="https://blog.csdn.net/weixin_43480867?type=blog"
+                target="_blank"
+                rel="noreferrer"
+              >
                 CSDN
-              </a>
+              </Link>
             </span>
           </li>
         </ul>

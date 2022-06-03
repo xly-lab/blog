@@ -51,19 +51,9 @@ export default function Header() {
         path: '/',
       },
       {
-        text: '文章',
-        icon: <ArticleIcon />,
-        path: '/article',
-      },
-      {
         text: '标签',
         icon: <LocalOfferIcon />,
         path: '/tag',
-      },
-      {
-        text: '动态',
-        icon: <HdrWeakIcon />,
-        path: '/dynamic',
       },
       {
         text: '关于',

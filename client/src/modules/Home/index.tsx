@@ -31,8 +31,7 @@ export default function Home() {
     } catch (error) {
       setStatus('fail');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [limit, offset]);
 
   useEffect(() => {
     reqArticle();
