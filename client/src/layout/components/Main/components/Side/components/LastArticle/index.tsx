@@ -1,4 +1,5 @@
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import { format } from 'timeago.js';
 import React from 'react';
 export default function LastArticle() {
   return (
@@ -13,7 +14,7 @@ export default function LastArticle() {
           <div className="truncate normal-case  md:w-48 w-full" title="liunx 定时备份博客数据 Git">
             liunx 定时备份博客数据 Git
           </div>
-          <div>2021-08-08</div>
+          <div>{format('2021-08-08', 'zh_CN')}</div>
         </div>
       </div>
     </div>

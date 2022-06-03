@@ -5,6 +5,7 @@ import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import UpdateIcon from '@mui/icons-material/Update';
 import { blue } from '@mui/material/colors';
 import React from 'react';
+import { format } from 'timeago.js';
 import { Article } from '../../interface/Article';
 import img from './imgs/art_img.jpg';
 import style from './index.module.scss';
@@ -16,8 +17,8 @@ export default function ArticleCard({ article }: { article: Article }) {
       w-full 
       rounded 
       flex 
-       md:flex-row flex-col
-       md:justify-start justify-center
+      md:flex-row flex-col
+      md:justify-start justify-center
       items-start 
       space-y-4 
       box-border
@@ -48,7 +49,7 @@ function Container({ article }: { article: Article }) {
       <div
         className="flex 
       flex-row items-center
-       md:space-x-1 space-y-1
+      md:space-x-1 space-y-1
       text-sm 
       truncate
       w-max"
@@ -59,7 +60,7 @@ function Container({ article }: { article: Article }) {
             color: blue[300],
           }}
         />
-        <span className="text-gray-400">发布于 {article.createdAt} |</span>
+        <span className="text-gray-400">发布于 {format(new Date(article.createdAt), 'zh_CN')} |</span>
 
         <UpdateIcon
           fontSize="small"
@@ -67,12 +68,12 @@ function Container({ article }: { article: Article }) {
             color: blue[300],
           }}
         />
-        <span className="text-gray-400">更新于{article.updatedAt}</span>
+        <span className="text-gray-400">更新于 {format(new Date(article.updatedAt), 'zh_CN')}</span>
       </div>
       <div
         className="flex 
       flex-row items-center
-       md:space-x-1 space-y-1
+      md:space-x-1 space-y-1
       truncate
       text-sm w-max"
       >
