@@ -47,7 +47,7 @@ export default function Tag() {
   }, []);
 
   return (
-    <div className="w-full bg-white p-8 rounded ">
+    <div className="w-full bg-white rounded ">
       {status === 'ok' ? (
         tags.map((item: TagType) => (
           <>
