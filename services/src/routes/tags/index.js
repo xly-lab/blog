@@ -4,7 +4,7 @@ const authorization = require('../../controller/common');
 
 const router = express.Router();
 
-router.get('/get', authorization, tagsController.getTags);
+router.get('/get', tagsController.getTags);
 router.post('/create', authorization, tagsController.createTag);
 
 module.exports = router;
