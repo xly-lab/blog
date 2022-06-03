@@ -6,13 +6,17 @@ import reportWebVitals from './reportWebVitals';
 import { SnackbarProvider } from 'notistack';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
+import { ThemeProvider } from '@emotion/react';
+import theme from './theme';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
-  <SnackbarProvider maxSnack={3}>
-    <App />
-    <ToastContainer limit={1} />
-  </SnackbarProvider>
+  <ThemeProvider theme={theme}>
+    <SnackbarProvider maxSnack={3}>
+      <App />
+      <ToastContainer limit={1} />
+    </SnackbarProvider>
+  </ThemeProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

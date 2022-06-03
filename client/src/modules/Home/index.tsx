@@ -1,11 +1,10 @@
-import AutorenewIcon from '@mui/icons-material/Autorenew';
-import { Button, CircularProgress, Pagination } from '@mui/material';
+import { Pagination } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import ArticleCard from '../../components/ArticleCard';
 import Loading from '../../components/Loading';
 import { Article, ArticleResponse } from '../../interface/Article';
 import services from '../../services';
-import { toast } from 'react-toastify';
 
 export default function Home() {
   const [limit, setLimit] = useState<number>(10);
