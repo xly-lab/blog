@@ -89,9 +89,9 @@ function Container({ article }: { article: Article }) {
             color: blue[300],
           }}
         />
-        <span className="text-gray-400">
+        <span className="text-gray-400 space-x-1">
           {article?.Tags?.map((item) => (
-            <span>{item}</span>
+            <span key={item}>{item}</span>
           ))}
         </span>
 

@@ -121,7 +121,7 @@ export default function Header() {
             </div>
           </Info>
           <List>
-            {menuObj.map((item, key) => (
+            {menuObj.map((item) => (
               <ListItem disablePadding key={item.path}>
                 <ListItemButton>
                   <ListItemIcon>{item.icon}</ListItemIcon>

@@ -10,7 +10,7 @@ export interface Article {
   like_count: number;
 }
 
-export interface RootObject {
+export interface ArticleResponse {
   total: number;
   articles: Article[];
   limit: number;
