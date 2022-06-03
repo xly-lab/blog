@@ -170,6 +170,7 @@ const getMoreArticles = async (req, res) => {
         exclude: ['body'],
       },
       distinct: true,
+      order: [['createdAt', 'DESC']],
     },
     title && {
       where: {
